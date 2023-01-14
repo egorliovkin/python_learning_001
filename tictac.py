@@ -1,10 +1,12 @@
+matrix_size = 3
+
 def create_matrix(init, x_size, y_size):
     return [[init for y in range(y_size)] for x in range(x_size)]
 
 def print_matrix(xs):
     [print(x) for x in xs]
 
-xs = create_matrix(0, 3, 3)
+xs = create_matrix(0, matrix_size, matrix_size)
 
 def ask_first():
     print("Игрок 1 сделай ход, твою дивизию!")
@@ -49,13 +51,13 @@ def check_line_win(x, y):
 
 def check_line_diag1(x, y):
     res = True
-    for nn in [0,1,2]:
+    for nn in range(matrix_size):
         res = res and (xs[nn][nn] == xs[y][x])
     return res
 
 def check_line_diag2(x, y):
     res = True
-    for nn in [0,1,2]:
+    for nn in range(matrix_size):
         res = res and (xs[2-nn][nn] == xs[y][x])
     return res
 
