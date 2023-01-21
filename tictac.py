@@ -26,41 +26,6 @@ def check(x,y):
         return False
     return True 
 
-def check_win(x,y):
-    if x == 1 and y == 1:
-        return check_line_win(x,y) or check_line_diag1(x, y) or check_line_diag2(x, y)
-    elif (x == 1 and (y == 0 or y == 2)) or (y == 1 and (x == 0 or x == 2)):
-        return check_line_win(x,y)
-    elif (x == 0 and y == 0) or (x == 2 and y == 2):
-        return check_line_win(x,y) or check_line_diag1(x, y)
-    else:
-        return check_line_win(x,y) or check_line_diag2(x, y)
-
-def check_line_win(x, y):
-    res = True
-    for nn in [0,1,2]:
-        res = res and (xs[nn][x] == xs[y][x])
-    if res:
-        return True
-    res = True
-    for nn in [0,1,2]:
-        res = res and (xs[y][nn] == xs[y][x])
-    if res:
-        return True
-    return False
-
-def check_line_diag1(x, y):
-    res = True
-    for nn in range(matrix_size):
-        res = res and (xs[nn][nn] == xs[y][x])
-    return res
-
-def check_line_diag2(x, y):
-    res = True
-    for nn in range(matrix_size):
-        res = res and (xs[2-nn][nn] == xs[y][x])
-    return res
-
 def game_loop():
     while True:
         x = 0
@@ -91,5 +56,29 @@ def game_loop():
         if check_win(x,y):
             print("Победил игрок 2!!!!!")
             exit(0)
+
+fh = lambda pair : (lambda x : x, lambda x : pair[1])
+fv = lambda pair : (lambda y : pair[0], lambda y : y)
+fr = lambda pair : (lambda x : x, lambda x : x - pair[0] + pair[1] )
+fl = lambda pair : (lambda x : x, lambda x : pair[0] + pair[1] - x )
+
+def check_win(x,y):
+    ffh = fh((x,y))
+    ffv = fv((x,y))
+    ffr = fr((x,y))
+    ffl = fl((x,y))
+    ds = ([(ffh[0](x),ffh[1](x)) for x in range(matrix_size) if (ffr[0](x) != x or ffr[1](x) != y)],
+          [(ffv[0](y),ffv[1](y)) for y in range(matrix_size) if (ffr[0](x) != x or ffr[1](x) != y)],
+          [(ffr[0](x),ffr[1](x)) for x in range(matrix_size) if ((ffr[0](x) != x or ffr[1](x) != y) and (ffr[0](x) >= 0 and ffr[0](x) < matrix_size) and (ffr[1](x) >= 0 and ffr[1](x) < matrix_size))],
+          [(ffl[0](x),ffl[1](x)) for x in range(matrix_size) if ((ffr[0](x) != x or ffr[1](x) != y) and (ffl[0](x) >= 0 and ffl[0](x) < matrix_size and ffl[1](x) >= 0 and ffl[1](x) < matrix_size))])
+
+    for chs in ds:
+        if len(chs) > 0:
+            res = True
+            for xy in chs:
+                res = res and (xs[xy[1]][xy[0]] == xs[y][x])
+            if res:
+                return res
+    return False
 
 game_loop()
