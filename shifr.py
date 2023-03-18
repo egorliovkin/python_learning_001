@@ -1,0 +1,6 @@
+c_str = input()
+s_str = input()
+crypto = dict(zip(c_str, s_str))
+decrypto = dict(zip(s_str, c_str))
+print(''.join(crypto[x] for x in input()))
+print(''.join(decrypto[x] for x in input()))
